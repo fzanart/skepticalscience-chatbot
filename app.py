@@ -37,8 +37,8 @@ Notice how you’re feeling right now. How might this feeling influence the way 
 def init_node(message, history):
 
     messages = ChatPromptTemplate.from_messages([
-        ("system", PARAPHRASE_SYSTEM),
-        ("human", message)])
+        (SystemMessage, PARAPHRASE_SYSTEM),
+        (HumanMessage, message)])
 
     response = model.invoke(messages)
     
