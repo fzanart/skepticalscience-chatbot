@@ -5,9 +5,9 @@ from openai import OpenAI
 
 # Initialize OpenAI client (replace with HuggingFace models if needed)
 def get_api_key():
-    return os.getenv("OPENAI_API_KEY")
+    return 
 
-client = OpenAI(api_key=get_api_key())
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # FLICC taxonomy of climate denial techniques
 FLICC_TECHNIQUES = {
