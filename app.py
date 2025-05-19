@@ -1,10 +1,11 @@
+import os
 import gradio as gr
 from huggingface_hub import InferenceClient
 
 """
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
-client = InferenceClient(model="prompthero/openjourney-v4")
+client = InferenceClient(model="prompthero/openjourney-v4", token=os.getenv("chatbot"))
 
 
 def respond(
