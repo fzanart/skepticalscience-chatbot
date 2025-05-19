@@ -13,7 +13,7 @@ model = ChatOpenAI(
 
 
 
-def simple_response(message):
+def simple_response(message, history):
 
     response = model.invoke(message)
     
