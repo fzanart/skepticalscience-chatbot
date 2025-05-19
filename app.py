@@ -5,7 +5,7 @@ from huggingface_hub import InferenceClient
 """
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
-client = InferenceClient(model="mistralai/Mistral-7B-Instruct-v0.3", api_key=os.getenv("chatbot"))
+client = InferenceClient(model="deepseek-ai/DeepSeek-V3-0324", api_key=os.getenv("chatbot"))
 
 
 def respond(
