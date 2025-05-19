@@ -1,4 +1,4 @@
-import random
+import os
 import gradio as gr
 from langchain_openai import ChatOpenAI
 
