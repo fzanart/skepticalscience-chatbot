@@ -25,11 +25,10 @@ def reset_session():
 
 def chat(message, history):
 
-    if not session_state:
-        session_state = get_session_state()
+    session_state = get_session_state()
 
     try:
-        if not session_state.get("authenticated", False):
+        if not current_session.get("authenticated", False):
             if message.strip() == CHAT_PASSWORD:
                 session_state["authenticated"] = True
             else:
