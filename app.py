@@ -28,7 +28,7 @@ def chat(message, history):
     session_state = get_session_state()
 
     try:
-        if not current_session.get("authenticated", False):
+        if not session_state.get("authenticated", False):
             if message.strip() == CHAT_PASSWORD:
                 session_state["authenticated"] = True
             else:
