@@ -50,4 +50,4 @@ def chat(message, history):
 demo = gr.ChatInterface(chat, type="messages", title="Climate Bot")
 
 if __name__ == "__main__":
-    demo.launch(auth=check_auth)
+    demo.launch(share=True, auth=check_auth)
