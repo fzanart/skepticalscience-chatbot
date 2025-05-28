@@ -4,7 +4,13 @@ from langgraph.types import Command
 
 from graph import app as graph
 
+from uuid import uuid4
 session_state = {"config": {"configurable": {"thread_id": "demo"}}, "interrupted": None}
+
+def reset_session():
+    """Reset the session with new thread_id"""
+    session_state["config"]["configurable"]["thread_id"] = str(uuid4())
+    session_state["interrupted"] = None
 
 def chat(message, history):
     try:
@@ -20,6 +26,10 @@ def chat(message, history):
         # Check for interrupt
         if '__interrupt__' in result:
             session_state["interrupted"] = True
+        else:
+            # Check if conversation ended (no more nodes to execute)
+            if result.get('messages') and len(result.get('messages', [])) > 0:
+                reset_session()
         
         # Return last AI message
         for msg in reversed(result['messages']):
