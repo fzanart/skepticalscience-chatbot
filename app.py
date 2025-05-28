@@ -2,13 +2,13 @@ import os
 import gradio as gr
 from langchain_core.messages import HumanMessage
 from langgraph.types import Command
-
 from graph import app as graph
 from uuid import uuid4
 
-# Get password from environment
-CHAT_PASSWORD = os.getenv("CHAT_PASSWORD", "default_password_123")
+CHAT_PASSWORD = os.getenv("CHAT_PASSWORD")
 
+# Simple global state
+authenticated = False
 session_state = {"config": {"configurable": {"thread_id": "demo"}}, "interrupted": None}
 
 def reset_session():
@@ -16,30 +16,42 @@ def reset_session():
     session_state["config"]["configurable"]["thread_id"] = str(uuid4())
     session_state["interrupted"] = None
 
-def check_auth(username, password):
-    """Check if credentials are valid"""
-    return username == "admin" and password == CHAT_PASSWORD
+def close_session():
+    """Close session and unauthenticate user"""
+    global authenticated
+    authenticated = False
+    reset_session()
 
 def chat(message, history):
+    global authenticated
+    
+    # Check for session close command
+    if message.strip().lower() == "close session":
+        close_session()
+        return "Session closed"
+    
+    # Check password first
+    if not authenticated:
+        if message.strip() == CHAT_PASSWORD:
+            authenticated = True
+        else:
+            return "🔒 Please enter the correct password."
+    
+    # Normal chat after authentication
     try:
         if session_state["interrupted"]:
-            # Resume from interrupt
             result = graph.invoke(Command(resume=message), config=session_state["config"])
             session_state["interrupted"] = None
         else:
-            # Start new or continue conversation
             state = {"messages": [HumanMessage(content=message)], "count": 0}
             result = graph.invoke(state, config=session_state["config"])
         
-        # Check for interrupt
         if '__interrupt__' in result:
             session_state["interrupted"] = True
         else:
-            # Check if conversation ended
             if result.get('messages') and len(result.get('messages', [])) > 0:
                 reset_session()
         
-        # Return last AI message
         for msg in reversed(result['messages']):
             if hasattr(msg, 'content') and 'AI' in str(type(msg)):
                 return msg.content
@@ -47,7 +59,7 @@ def chat(message, history):
     except:
         return "Error occurred. Please try again."
 
-demo = gr.ChatInterface(chat, type="messages", title="Climate Bot")
+demo = gr.ChatInterface(chat, type="messages", title="🔒 Climate Bot")
 
 if __name__ == "__main__":
-    demo.launch(share=True, auth=check_auth)
+    demo.launch()
