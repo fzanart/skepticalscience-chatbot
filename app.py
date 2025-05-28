@@ -25,7 +25,7 @@ def reset_session():
 
 def chat(message, history):
 
-    if session_state is None:
+    if not session_state:
         session_state = get_session_state()
 
     try:
