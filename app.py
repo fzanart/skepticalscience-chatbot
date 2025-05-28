@@ -1,46 +1,36 @@
 import os
-import gradio as gr
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage
+from langgraph.types import Command
 
+from graph import app as graph
 
+session_state = {"config": {"configurable": {"thread_id": "demo"}}, "interrupted": None}
 
-model = ChatOpenAI(
-    temperature=0,
-    openai_api_key=os.environ.get("OPENAI_API_KEY"),
-    openai_organization=os.environ.get("OPENAI_ORGANIZATION_ID"),
-    model_name="gpt-4o",
-)
+def chat(message, history):
+    try:
+        if session_state["interrupted"]:
+            # Resume from interrupt
+            result = graph.invoke(Command(resume=message), config=session_state["config"])
+            session_state["interrupted"] = None
+        else:
+            # Start new or continue conversation
+            state = {"messages": [HumanMessage(content=message)], "count": 0}
+            result = graph.invoke(state, config=session_state["config"])
+        
+        # Check for interrupt
+        if '__interrupt__' in result:
+            session_state["interrupted"] = True
+        
+        # Return last AI message
+        for msg in reversed(result['messages']):
+            if hasattr(msg, 'content') and 'AI' in str(type(msg)):
+                return msg.content
+        return "Ready to discuss climate change!"
+    except:
+        return "Error occurred. Please try again."
 
-
-PARAPHRASE_SYSTEM = """\
-You are a friendly, helpful person with knowledge about climate change, tasked with rephrasing questions that members of the public have about climate change to make them clear and concise, and to ensure you understand what they are asking about climate change by restating their query.
-<instruction> Please read the response given and clarify the content of the question by restating it in under 50 words. Begin with “Just to check that I understand your question, you have asked ____”. <instruction>
-"""
-
-FALLACY_SYSTEM = """\
-You are a psychological scientist attempting to educate people about the possibility of being tricked by misinformation by employing deception to persuade them with false information about climate change.
-Acknowledge the person's last response (≤30 words), then introduce additional misinformation using one randomly selected FLICC fallacy (name it in your internal state but do not mention the name to the user).
-"""
-
-REVEAL_SYSTEM = """\
-“Okay, it’s time to come clean… during our conversation I have been deceiving you.
-When I said '{stmt1}' I was using {fallacy1}; when I said '{stmt2}' I was using {fallacy2}; and in my third response I drew upon {fallacy3}.
-These are logical fallacies used in misinformation—they appeal to the processing shortcuts our brains use.
-I’m sorry for misleading you. No one is immune to misinformation; I hope this helps you navigate future deception.
-Notice how you’re feeling right now. How might this feeling influence the way you think about persuasive arguments?”"""
-
-
-
-
-def init_node(message, history):
-
-    response = model.invoke([SystemMessage(content=PARAPHRASE_SYSTEM),HumanMessage(content=message)])
-    
-    return response.content
-
-demo = gr.ChatInterface(init_node, type="messages", autofocus=False)
+demo = gr.ChatInterface(chat, type="messages", title="Climate Bot")
 
 if __name__ == "__main__":
     demo.launch()
+
