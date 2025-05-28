@@ -7,14 +7,16 @@ from graph import app as graph
 
 from uuid import uuid4
 
-session_state = {
-    "config": {"configurable": {"thread_id": str(uuid4())}}, 
-    "interrupted": None,
-    "authenticated": False
-}
-
 
 CHAT_PASSWORD = os.getenv("CHAT_PASSWORD")
+
+def get_session_state():
+    """Get or create session state - resets on browser reload"""
+    return {
+        "config": {"configurable": {"thread_id": str(uuid4())}}, 
+        "interrupted": None,
+        "authenticated": False
+    }
 
 def reset_session():
     """Reset the session with new thread_id"""
@@ -22,8 +24,12 @@ def reset_session():
     session_state["interrupted"] = None
 
 def chat(message, history):
+
+    if session_state is None:
+        session_state = get_session_state()
+
     try:
-        if not session_state["authenticated"]:
+        if not session_state.get("authenticated", False):
             if message.strip() == CHAT_PASSWORD:
                 session_state["authenticated"] = True
             else:
