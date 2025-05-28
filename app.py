@@ -18,38 +18,36 @@ def get_session_state():
         "authenticated": False
     }
 
-def reset_session():
-    """Reset the session with new thread_id"""
-    session_state["config"]["configurable"]["thread_id"] = str(uuid4())
-    session_state["interrupted"] = None
-
 def chat(message, history):
 
-    session_state = get_session_state()
+    if current_session is None or not current_session:
+        current_session = get_session_state()
+    else:
+        current_session = session_state
 
     try:
-        if not session_state.get("authenticated", False):
+        if not current_session.get("authenticated", False):
             if message.strip() == CHAT_PASSWORD:
-                session_state["authenticated"] = True
+                current_session["authenticated"] = True
             else:
                 return "Please enter the correct password to access the chat."
         
-        if session_state["interrupted"]:
+        if current_session["interrupted"]:
             # Resume from interrupt
-            result = graph.invoke(Command(resume=message), config=session_state["config"])
-            session_state["interrupted"] = None
+            result = graph.invoke(Command(resume=message), config=current_session["config"])
+            current_session["interrupted"] = None
         else:
             # Start new or continue conversation
             state = {"messages": [HumanMessage(content=message)], "count": 0}
-            result = graph.invoke(state, config=session_state["config"])
+            result = graph.invoke(state, config=current_session["config"])
         
         # Check for interrupt
         if '__interrupt__' in result:
-            session_state["interrupted"] = True
+            current_session["interrupted"] = True
         else:
             # Check if conversation ended (no more nodes to execute)
             if result.get('messages') and len(result.get('messages', [])) > 0:
-                reset_session()
+                get_session_state() # this resets the session
         
         # Return last AI message
         for msg in reversed(result['messages']):
