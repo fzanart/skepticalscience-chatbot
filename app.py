@@ -36,7 +36,6 @@ def chat(message, history):
         if not current_session.get("authenticated", False):
             if message.strip() == CHAT_PASSWORD:
                 current_session["authenticated"] = True
-                return "🔓 Access granted! Welcome to Climate Bot. How can I help you today?"
             else:
                 return "🔒 Please enter the correct password to access the chat."
         
