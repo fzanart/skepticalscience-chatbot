@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 from langchain_core.messages import HumanMessage
 from langgraph.types import Command
@@ -5,7 +6,15 @@ from langgraph.types import Command
 from graph import app as graph
 
 from uuid import uuid4
-session_state = {"config": {"configurable": {"thread_id": "demo"}}, "interrupted": None}
+
+session_state = {
+    "config": {"configurable": {"thread_id": str(uuid4())}}, 
+    "interrupted": None,
+    "authenticated": False
+}
+
+
+CHAT_PASSWORD = os.getenv("CHAT_PASSWORD")
 
 def reset_session():
     """Reset the session with new thread_id"""
@@ -14,6 +23,12 @@ def reset_session():
 
 def chat(message, history):
     try:
+        if not session_state["authenticated"]:
+            if message.strip() == CHAT_PASSWORD:
+                session_state["authenticated"] = True
+            else:
+                return "Please enter the correct password to access the chat."
+        
         if session_state["interrupted"]:
             # Resume from interrupt
             result = graph.invoke(Command(resume=message), config=session_state["config"])
