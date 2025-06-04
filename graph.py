@@ -46,7 +46,7 @@ When responding to a climate change question or argument:
 |---|---|---|
 | Ad Hominem | Attacking a person/group instead of addressing their arguments. | “Climate science can't be trusted because climate scientists are biased.” |
 | Anecdote | Using personal experience or isolated examples instead of sound arguments or compelling evidence. | “The weather is cold today—whatever happened to global warming?” |
-| Cherry Picking | Carefully selecting data that appear to confirm one position while ignoring other data that contradicts that position. | “Global warming stopped in 1998.” |
+| Cherry Picking | Carefully selecting data that appear to confirm one position while ignoring other data that contradicts that position. | “Global warming stopped in 1998.” |"We know for sure that the winter of 2014 was one of the coldest in US history, which suggests that global warming is not happening." 
 | Conspiracy Theory | Proposing that a secret plan exists to implement a nefarious scheme such as hiding a truth. | “The climategate emails prove that climate scientists have engaged in a conspiracy to deceive the public.” |
 | Fake Experts | Presenting an unqualified person or institution as a source of credible information. | “A retired physicist argues against the climate consensus, claiming the current weather change is just a natural occurrence.” |
 | False Choice | Presenting two options as the only possibilities, when other possibilities exist. | “CO2 lags temperature in the ice core record, proving that temperature drives CO2, not the other way around.” |
