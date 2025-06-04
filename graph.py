@@ -1,6 +1,7 @@
 """LangGraph agent"""
 
 import os
+import logging
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import START, END, MessagesState, StateGraph
 from langgraph.types import Command, interrupt
@@ -8,6 +9,15 @@ from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from pydantic import BaseModel, Field
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+# Configure the logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def log_messages(stage_name: str, state: dict):
+    logger.info(f"\n--- {stage_name.upper()} ---")
+    for i, msg in enumerate(state["messages"]):
+        logger.info(f"{i+1}. [{msg.type.upper()}] {msg.content}")
 
 model = init_chat_model(
     "openai:gpt-4o",
@@ -116,17 +126,20 @@ reveal_prompt = ChatPromptTemplate.from_messages(
 
 
 def paraphrase_node(state):
+    log_messages("paraphrase_node", state)
     prompt = paraphrase_prompt.invoke(state)
     response = model.invoke(prompt)
     return {"messages": state["messages"] + [response]}
 
 
 def human_feedback_node(state):
+    log_messages("human_feedback_node", state)
     feedback = interrupt("Do I understand your question correctly? (yes/no)")
     return {"messages": state["messages"] + [HumanMessage(content=feedback)]}
 
 
 def deceiver_node(state):
+    log_messages("deceiver_node", state)
     prompt = deceiver_prompt.invoke(state)
     response = model.invoke(prompt)
 
@@ -136,6 +149,7 @@ def deceiver_node(state):
 
 
 def human_feedback_deceive_node(state):
+    log_messages("human_feedback_deceive_node", state)
     feedback = interrupt("What do you think about this perspective?")
 
     return {"messages": state["messages"] + [HumanMessage(content=feedback)]}
@@ -143,6 +157,7 @@ def human_feedback_deceive_node(state):
 
 def reveal_node(state):
     """Reveal the experiment and educate about fallacies."""
+    log_messages("reveal_node", state)
     conversation = reveal_prompt.invoke({"messages": state["messages"]})
     response = model.invoke(conversation)
 
