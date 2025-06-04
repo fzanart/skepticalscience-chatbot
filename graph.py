@@ -134,7 +134,8 @@ def paraphrase_node(state):
 
 def human_feedback_node(state):
     log_messages("human_feedback_node", state)
-    return interrupt("Do I understand your question correctly? (yes/no)")
+    feedback = interrupt("Do I understand your question correctly? (yes/no)")
+    return {"messages": state["messages"] + [HumanMessage(content=feedback)]}
 
 
 def deceiver_node(state):
@@ -149,7 +150,8 @@ def deceiver_node(state):
 
 def human_feedback_deceive_node(state):
     log_messages("human_feedback_deceive_node", state)
-    return interrupt("What do you think about this perspective?")
+    feedback = interrupt("What do you think about this perspective?")
+    return {"messages": state["messages"] + [HumanMessage(content=feedback)]} 
 
 
 def reveal_node(state):
