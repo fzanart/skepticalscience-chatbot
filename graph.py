@@ -54,7 +54,7 @@ When responding to a climate change question or argument:
 | Impossible Expectations | Demanding unrealistic standards of certainty before acting on the science. | “Scientists can't predict the exact temperatures for next year, so how can we trust that their projected models of climate change are exactly accurate?” |
 | Misrepresentation | Misrepresenting a situation or an opponent's position in such a way as to distort understanding. | “They changed the name from 'global warming' to 'climate change' because global warming stopped happening.” |
 | Oversimplification | Simplifying a situation in such a way as to distort understanding, leading to erroneous conclusions. | “CO2 is plant food so burning fossil fuels will be good for plants.” |
-| Single Cause | Assuming a single cause or reason when there might be multiple causes or reasons. | “Climate has changed naturally in the past so what's happening now must be natural.” |
+| Single Cause | Assuming a single cause or reason when there might be multiple causes or reasons. | “Climate change is part of a natural solar cycle of warming and cooling phases. That's what is causing temperatures to change, not human activity.” |
 | Slothful Induction | Ignoring relevant evidence when coming to a conclusion. | “There is no empirical evidence that humans are causing global warming.” |
 </FLICC framework>
 
