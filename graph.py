@@ -184,12 +184,15 @@ def assess_human_agreement(state):
 def wait_for_human_feedback(state):
 
     count = state.get("count", 0)
-    return "reveal" if count >= 3 else "loop"
+    if count >= 3:
+        return "reveal"
+    else:
+        return "loop"
 
 
 # State definition
 class State(MessagesState):
-    count: int
+    count: int = 0
 
 
 # Define a new graph
