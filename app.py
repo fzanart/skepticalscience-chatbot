@@ -34,6 +34,7 @@ def chat(message, history):
     if not authenticated:
         if message.strip() == CHAT_PASSWORD:
             authenticated = True
+            return "✅ Authenticated."
         else:
             return "🔒 Please enter the correct password."
     
