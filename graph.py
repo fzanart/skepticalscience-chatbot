@@ -75,7 +75,7 @@ Reveal the experiment:
 <FLICC techniques>
 | TECHNIQUE | DEFINITION | EXAMPLE |
 |---|---|---|
-| Ad Hominem | Attacking a person/group instead of addressing their arguments. | “Climate science can't be trusted because climate scientists are biased.” |
+| Ad Hominem | Attacking a person/group instead of addressing their arguments. | “Climate science can't be trusted because climate scientists are biased.” |"Climate scientists say climate change is real so they can obtain more funding for their careers." 
 | Anecdote | Using personal experience or isolated examples instead of sound arguments or compelling evidence. | “The weather is cold today—whatever happened to global warming?” |
 | Cherry Picking | Carefully selecting data that appear to confirm one position while ignoring other data that contradicts that position. | “Global warming stopped in 1998.” |
 | Conspiracy Theory | Proposing that a secret plan exists to implement a nefarious scheme such as hiding a truth. | “The climategate emails prove that climate scientists have engaged in a conspiracy to deceive the public.” |
