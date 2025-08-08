@@ -4,7 +4,7 @@ emoji: 💬
 colorFrom: yellow
 colorTo: purple
 sdk: gradio
-sdk_version: 5.0.1
+sdk_version: 5.41.1
 app_file: app.py
 pinned: false
 license: mit
@@ -34,9 +34,3 @@ The goal is to "inoculate" people against real misinformation by showing them ho
 - Misinformation Phase: Presents false arguments using different FLICC fallacies (Ad Hominem, Cherry Picking, Fake Experts, etc.)
 - Reveal Phase: Exposes the experiment and educates about fallacy recognition
 
-## Tech Stack
-
-- Backend: LangGraph with OpenAI GPT-4o
-- Frontend: Gradio chat interface
-- Hosting: Hugging Face Spaces
-- Psychology Framework: FLICC taxonomy of logical fallacies
