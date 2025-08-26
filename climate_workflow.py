@@ -121,7 +121,6 @@ class ClimateWorkflow:
         elif self.stage == "reveal":
 
             response = self.call_llm("assets/reveal_system.md")
-            # TODO: add reset function
 
         else:
             # Fallback - shouldn't happen
@@ -130,5 +129,19 @@ class ClimateWorkflow:
         self.history.append(
             StageMessage(role="assistant", content=response, stage=self.stage)
         )
+
+        # When conversation ends, send transcript back to parent
+        if self.stage == "reveal":
+            # build transcript as simple text
+            transcript = "\n".join([f"{m.role}: {m.content}" for m in self.history])
+            response += f"""
+            <script>
+            window.parent.postMessage(
+                {{ type: "chatbot_done", transcript: {repr(transcript)} }},
+                "*"
+            );
+            </script>
+            """
+            # TODO: add reset function
 
         return response
