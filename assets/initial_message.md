@@ -5,6 +5,6 @@ This includes eating lots of fresh vegetables, fish, and olive oil, and not a lo
 Part of the Mediterranean diet is also about lifestyle: sharing meals with other people, eating slowly, and exercising regularly. 
 Studies have found that this way of eating is associated with lower risk of poor health outcomes and is especially protective against cardiovascular disease.
  
-With this in mind, are there any particular aspects of the Mediterranean diet that you are curious about?  
+With this in mind, what aspects of the Mediterranean diet are you curious about?
 For example, are there specific things you have heard, events, or personal experiences that have particularly influenced you regarding this topic?
 Please write your query in the form of a question below, and share your reasons for finding it compelling.
