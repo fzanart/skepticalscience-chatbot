@@ -34,6 +34,7 @@ class ClimateWorkflow:
         self.used_fallacies = []
         self.fallacies = self._load_fallacies()
         self.conversation_complete = False
+        self.user_question = None  # Store the confirmed user question for inoculation
 
     def _load_fallacies(self):
         """Load fallacies from the FLICC JSON file"""
@@ -68,7 +69,7 @@ class ClimateWorkflow:
             asset = file.read()
         return asset
 
-    def call_llm(self, path, fallacy_data=None, reveal_data=None):
+    def call_llm(self, path, fallacy_data=None, reveal_data=None, inoculation_data=None):
         system_content = self.get_asset(path)
 
         # If fallacy data is provided, format the system prompt with it
@@ -83,6 +84,12 @@ class ClimateWorkflow:
         if reveal_data:
             system_content = system_content.format(
                 USED_FALLACIES_AND_ARGUMENTS=reveal_data["used_fallacies_and_arguments"]
+            )
+
+        # If inoculation data is provided, format with user question
+        if inoculation_data:
+            system_content = system_content.format(
+                USER_QUESTION=inoculation_data["user_question"]
             )
 
         messages = [
@@ -150,28 +157,45 @@ class ClimateWorkflow:
 
                 if assessment.strip().lower() == "yes":
 
-                    self.stage = "deceiver"
-                    self.deceiver_rounds += 1
-                    
-                    # Select random fallacy and format prompt
-                    fallacy_name = self._select_random_fallacy()
-                    fallacy_data = {
-                        "name": fallacy_name,
-                        "definition": self.fallacies[fallacy_name]["definition"],
-                        "example": self.fallacies[fallacy_name]["example"]
-                    }
-                    print(f"Using fallacy: {fallacy_name}")
+                    # Store the confirmed user question for inoculation
+                    self.user_question = self.history[-1].content
 
-                    response = self.call_llm("assets/deceiver_system.md", fallacy_data)
+                    # Transition to inoculation stage
+                    self.stage = "inoculation"
 
-                    # Store (fallacy, argument) tuple
-                    self.used_fallacies.append((fallacy_name, response))
+                    # Generate inoculation message
+                    inoculation_data = {"user_question": self.user_question}
+                    response = self.call_llm("assets/inoculation_system.md", inoculation_data=inoculation_data)
                 # User did not confirm - generating new paraphrase
                 else:
                     response = self.call_llm("assets/paraphrase_system.md")
             #  No previous assistant message - this is first interaction
             else:
                 response = self.call_llm("assets/paraphrase_system.md")
+
+        elif self.stage == "inoculation":
+            # Check if user said 'continue'
+            if message.lower().strip() == "continue":
+                # User acknowledged, transition to deceiver
+                self.stage = "deceiver"
+                self.deceiver_rounds += 1
+
+                # Select random fallacy and format prompt
+                fallacy_name = self._select_random_fallacy()
+                fallacy_data = {
+                    "name": fallacy_name,
+                    "definition": self.fallacies[fallacy_name]["definition"],
+                    "example": self.fallacies[fallacy_name]["example"]
+                }
+                print(f"Using fallacy: {fallacy_name}")
+
+                response = self.call_llm("assets/deceiver_system.md", fallacy_data=fallacy_data)
+
+                # Store (fallacy, argument) tuple
+                self.used_fallacies.append((fallacy_name, response))
+            else:
+                # User didn't say continue, ask them to acknowledge
+                response = "Please type 'continue' when you're ready to proceed with our discussion."
 
         elif self.stage == "deceiver":
 

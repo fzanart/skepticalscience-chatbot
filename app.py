@@ -17,7 +17,9 @@ def save_conversation(workflow_state, history):
         fallacies_used = [fallacy_name for fallacy_name, _ in workflow_state.used_fallacies]
         f.write(f"Fallacies used: {', '.join(fallacies_used)}\n")
         f.write(f"Final stage: {workflow_state.stage}\n")
-        f.write(f"Deceiver rounds: {workflow_state.deceiver_rounds}\n\n")
+        f.write(f"Deceiver rounds: {workflow_state.deceiver_rounds}\n")
+        f.write(f"User question: {workflow_state.user_question}\n")
+        f.write(f"Inoculation provided: {'Yes' if workflow_state.user_question else 'No'}\n\n")
         f.write("=== CONVERSATION HISTORY ===\n\n")
         
         for msg in history:
