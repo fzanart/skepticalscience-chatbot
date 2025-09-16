@@ -1,3 +1,16 @@
+---
+title: Climate Chatbot
+emoji: 💬
+colorFrom: yellow
+colorTo: purple
+sdk: gradio
+sdk_version: 5.41.1
+app_file: app.py
+pinned: false
+license: mit
+short_description: Climate Misinformation Inoculation Chatbot.
+---
+
 # Chatbot Project: Climate Misinformation Inoculation Chatbot
 
 An educational chatbot that teaches people to recognize climate misinformation by using psychological "inoculation" techniques - deliberately exposing users to misinformation before revealing the fallacies used.
