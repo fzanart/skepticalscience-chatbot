@@ -1,5 +1,5 @@
 ---
-title: Climate Chatbot
+title: PreBunk Climate Bot
 emoji: 💬
 colorFrom: yellow
 colorTo: purple
@@ -8,7 +8,7 @@ sdk_version: 5.41.1
 app_file: app.py
 pinned: false
 license: mit
-short_description: Climate Misinformation Inoculation Chatbot.
+short_description: Pre-bunking chatbot for climate misinformation
 ---
 
 # Chatbot Project: Climate Misinformation Inoculation Chatbot
