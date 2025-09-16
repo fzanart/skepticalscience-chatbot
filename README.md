@@ -1,5 +1,5 @@
 ---
-title: Chatbot
+title: Control Chatbot
 emoji: 💬
 colorFrom: yellow
 colorTo: purple
@@ -8,29 +8,26 @@ sdk_version: 5.41.1
 app_file: app.py
 pinned: false
 license: mit
+short_description: Evidence-based Mediterranean diet tips.
 ---
 
-An example chatbot using [Gradio](https://gradio.app), [`huggingface_hub`](https://huggingface.co/docs/huggingface_hub/v0.22.2/en/index), and the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index).
+# Chatbot Project: Mediterranean Diet Inoculation Chatbot
 
-# Chatbot Project: Climate Misinformation Inoculation Chatbot
-
-An educational chatbot that teaches people to recognize climate misinformation by using psychological "inoculation" techniques - deliberately exposing users to misinformation before revealing the fallacies used.
+An educational chatbot that teaches people to recognize nutrition misinformation by using psychological "inoculation" techniques – deliberately exposing users to misleading claims about the Mediterranean diet before revealing the fallacies used.
 
 ## What This Is
-
 This is a research-based educational tool that:
 
-1. Clarifies your climate change question by paraphrasing it
-2. Deceives you with 3 rounds of climate misinformation using FLICC fallacy techniques
-3. Reveals the experiment and teaches you about the logical fallacies that were used
+1. Clarifies your nutrition question by paraphrasing it
+2. Presents 3 rounds of Mediterranean diet misinformation using common misleading techniques
+3. Reveals the experiment and teaches you about the misleading arguments that were used
 
-The goal is to "inoculate" people against real misinformation by showing them how these techniques work in a controlled, educational setting.
+The goal is to "inoculate" people against real nutrition misinformation by showing them how these techniques work in a controlled, educational setting.
 
 ## How It Works
 
 3-Phase Process:
 
-- Paraphrase Phase: Bot clarifies your climate question
-- Misinformation Phase: Presents false arguments using different FLICC fallacies (Ad Hominem, Cherry Picking, Fake Experts, etc.)
-- Reveal Phase: Exposes the experiment and educates about fallacy recognition
-
+- Paraphrase Phase: Bot clarifies your nutrition question
+- Misinformation Phase: Presents misleading claims about the Mediterranean diet using common fallacy techniques
+- Reveal Phase: Exposes the experiment and educates about identifying misleading nutrition arguments
