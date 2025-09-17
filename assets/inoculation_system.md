@@ -22,10 +22,8 @@ Based on the participant's specific climate question that was just confirmed in 
    - Look for scientific consensus
    - Be aware of emotional manipulation
 
-6. **Request acknowledgment**: End with a clear request for the participant to acknowledge they're ready to continue, such as:
-   - "Please let me know when you're ready to continue our discussion."
-   - "Type 'continue' when you'd like to proceed."
-   - "Are you ready to move forward with our conversation?"
+6. **Request acknowledgment**: End with a clear request for the participant to acknowledge they're ready to continue:
+   - Please type 'continue' when you're ready to proceed with our discussion.
 
 Keep the message conversational, supportive, and educational. The goal is to "inoculate" them against misinformation without being preachy or overwhelming.
 
