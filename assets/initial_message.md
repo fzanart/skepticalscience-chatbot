@@ -6,5 +6,4 @@ Part of the Mediterranean diet is also about lifestyle: sharing meals with other
 Studies have found that this way of eating is associated with lower risk of poor health outcomes and is especially protective against cardiovascular disease.
  
 With this in mind, what aspects of the Mediterranean diet are you curious about?
-For example, are there specific things you have heard, events, or personal experiences that have particularly influenced you regarding this topic?
-Please write your query in the form of a question below, and share your reasons for finding it compelling.
+Please write your query in the form of a question below, and any reasons you find it compelling.
