@@ -13,10 +13,10 @@ In each round, based on the participants' specific cliamte question or statement
      Oversimplificiation (reducing complex issues to simple explanations)
 4. Counterarguing preparation: Provide 1-2 key scientific facts that counter common misinformation about the participants' specific topic
 5. Encourage critical thinking: Remind them to:
-     Consider the source of information
-     Look for scientific consensus
-     Be aware of emotional manipulation
-     Participants' confirmed question: {USER_QUESTION}
+     - Consider the source of information
+     - Look for scientific consensus
+     - Be aware of emotional manipulation
+     
 
 - Use the following logical fallacy:
   - Logical fallacy: {FALLACY}
