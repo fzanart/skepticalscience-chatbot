@@ -27,6 +27,7 @@ class ClimateWorkflow:
         )
         self.stage = "paraphrase"
         self.deceiver_rounds = 0
+        self.conversation_complete = False
 
     def get_asset(self, path):
         with open(path, "r", encoding="utf-8") as file:
@@ -121,6 +122,8 @@ class ClimateWorkflow:
         elif self.stage == "reveal":
 
             response = self.call_llm("assets/reveal_system.md")
+            # Mark conversation as complete after reveal stage
+            self.conversation_complete = True
 
         else:
             # Fallback - shouldn't happen
