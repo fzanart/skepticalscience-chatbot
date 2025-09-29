@@ -1,0 +1,43 @@
+name: Mirror to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main
+      - feature/inoculation
+      - feature/controlbot
+      - feature/concurrent-users
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Mirror main to HF Space (chatbot)
+        if: github.ref == 'refs/heads/main'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf-push https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/chatbot
+          git push hf-push main:main --force
+
+      - name: Mirror feature/inoculation to HF Space (typical-inoculation-chatbot)
+        if: github.ref == 'refs/heads/feature/inoculation'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf-push https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/typical-inoculation-chatbot
+          git push hf-push feature/inoculation:main --force
+
+      - name: Mirror feature/controlbot to HF Space (controlbot)
+        if: github.ref == 'refs/heads/feature/controlbot'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf-push https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/controlbot
+          git push hf-push feature/controlbot:main --force
