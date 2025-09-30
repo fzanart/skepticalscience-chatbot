@@ -1,10 +1,6 @@
 import os
-import smtplib
+import requests
 from datetime import datetime, timedelta
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import gradio as gr
 from climate_workflow import ClimateWorkflow
 
@@ -27,39 +23,17 @@ def save_conversation(workflow_state, history):
             f.write(f"{msg['role'].upper()}: {msg['content']}\n\n")
 
     print(f"Conversation saved to: {filename}")
-    send_conversation_email(filename)
+    send_to_discord(filename)
 
 
-def send_conversation_email(filename):
+def send_to_discord(filename):
 
-    sender_email = os.environ.get("SENDER_EMAIL")
-    sender_password = os.environ.get("GMAIL_APP_PASSWORD")
-    recipient_email = os.environ.get("RECIPIENT_EMAIL")
+    webhook_url = os.environ.get("DISCORD_WEBHOOK_URL")
 
-    message = MIMEMultipart()
-    message["Subject"] = f"Conversation File {filename}"
-    message["From"] = sender_email
-    message["To"] = recipient_email
-
-    body = "Please find the attached conversation file."
-
-    message.attach(MIMEText(body, "plain"))
-
-    # Attach file
-    with open(filename, "rb") as attachment:
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(attachment.read())
-
-    encoders.encode_base64(part)
-    part.add_header(
-        "Content-Disposition", f"attachment; filename={os.path.basename(filename)}"
-    )
-    message.attach(part)
-
-    # Send email
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, recipient_email, message.as_string())
+    with open(filename, "rb") as f:
+        files = {"file": (os.path.basename(filename), f, "text/plain")}
+        data = {"content": f"====== {os.path.basename(filename)} ====="}
+        requests.post(webhook_url, data=data, files=files, timeout=60)
 
 
 def get_initial_messages():
