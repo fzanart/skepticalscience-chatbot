@@ -37,7 +37,7 @@ def save_conversation(workflow_state, history):
 def send_conversation_email(filename):
 
     sender_email = os.environ.get("SENDER_EMAIL")
-    sender_password = os.environ.get("SENDER_PASSWORD")
+    sender_password = os.environ.get("GMAIL_APP_PASSWORD")
     recipient_email = os.environ.get("RECIPIENT_EMAIL")
 
     message = MIMEMultipart()

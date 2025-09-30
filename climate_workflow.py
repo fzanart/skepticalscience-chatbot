@@ -34,7 +34,7 @@ class ClimateWorkflow:
         self.used_fallacies = []
         self.fallacies = self._load_fallacies()
         self.conversation_complete = False
-        self.user_question = None  # Store the confirmed user question for inoculation
+        # self.user_question = None  # Store the confirmed user question for inoculation
 
     def _load_fallacies(self):
         """Load fallacies from the FLICC JSON file"""
@@ -45,7 +45,8 @@ class ClimateWorkflow:
         """Select a random fallacy that hasn't been used yet"""
         used_fallacy_names = [fallacy_tuple[0] for fallacy_tuple in self.used_fallacies]
         available_fallacies = [
-            fallacy for fallacy in self.fallacies.keys()
+            fallacy
+            for fallacy in self.fallacies.keys()
             if fallacy not in used_fallacy_names
         ]
 
@@ -60,7 +61,7 @@ class ClimateWorkflow:
             fallacy_def = self.fallacies[fallacy_name]["definition"]
             formatted_fallacies.append(
                 f"{i}. **{fallacy_name}**: {fallacy_def}\n"
-                f"   - My argument: \"{argument}\""
+                f'   - My argument: "{argument}"'
             )
         return "\n\n".join(formatted_fallacies)
 
@@ -69,7 +70,9 @@ class ClimateWorkflow:
             asset = file.read()
         return asset
 
-    def call_llm(self, path, fallacy_data=None, reveal_data=None, inoculation_data=None):
+    def call_llm(
+        self, path, fallacy_data=None, reveal_data=None, inoculation_data=None
+    ):
         system_content = self.get_asset(path)
 
         # If fallacy data is provided, format the system prompt with it
@@ -77,7 +80,7 @@ class ClimateWorkflow:
             system_content = system_content.format(
                 FALLACY=fallacy_data["name"],
                 DEFINITION=fallacy_data["definition"],
-                EXAMPLE=fallacy_data["example"]
+                EXAMPLE=fallacy_data["example"],
             )
 
         # If reveal data is provided, format with used fallacies
@@ -86,15 +89,13 @@ class ClimateWorkflow:
                 USED_FALLACIES_AND_ARGUMENTS=reveal_data["used_fallacies_and_arguments"]
             )
 
-        # If inoculation data is provided, format with user question
-        if inoculation_data:
-            system_content = system_content.format(
-                USER_QUESTION=inoculation_data["user_question"]
-            )
+        # # If inoculation data is provided, format with user question
+        # if inoculation_data:
+        #     system_content = system_content.format(
+        #         USER_QUESTION=inoculation_data["user_question"]
+        #     )
 
-        messages = [
-            SystemMessage(content=system_content)
-        ] + self.format_messages()
+        messages = [SystemMessage(content=system_content)] + self.format_messages()
 
         for i, msg in enumerate(messages):
 
@@ -157,56 +158,39 @@ class ClimateWorkflow:
 
                 if assessment.strip().lower() == "yes":
 
-                    # Store the confirmed user question for inoculation
-                    self.user_question = self.history[-1].content
+                    # Transition to deceiver stage and start first round
+                    self.stage = "deceiver"
+                    self.deceiver_rounds += 1
 
-                    # Transition to inoculation stage
-                    self.stage = "inoculation"
+                    # Select random fallacy and format prompt
+                    fallacy_name = self._select_random_fallacy()
+                    fallacy_data = {
+                        "name": fallacy_name,
+                        "definition": self.fallacies[fallacy_name]["definition"],
+                        "example": self.fallacies[fallacy_name]["example"],
+                    }
+                    print(f"Using fallacy: {fallacy_name}")
 
-                    # Generate inoculation message
-                    inoculation_data = {"user_question": self.user_question}
-                    response = self.call_llm("assets/inoculation_system.md", inoculation_data=inoculation_data)
-                # User did not confirm - generating new paraphrase
-                else:
-                    response = self.call_llm("assets/paraphrase_system.md")
+                    response = self.call_llm(
+                        "assets/deceiver_system.md", fallacy_data=fallacy_data
+                    )
+
+                    # Store (fallacy, argument) tuple
+                    self.used_fallacies.append((fallacy_name, response))
             #  No previous assistant message - this is first interaction
             else:
                 response = self.call_llm("assets/paraphrase_system.md")
 
-        elif self.stage == "inoculation":
-            # Check if user said 'continue'
-            if message.lower().strip() == "continue":
-                # User acknowledged, transition to deceiver
-                self.stage = "deceiver"
-                self.deceiver_rounds += 1
-
-                # Select random fallacy and format prompt
-                fallacy_name = self._select_random_fallacy()
-                fallacy_data = {
-                    "name": fallacy_name,
-                    "definition": self.fallacies[fallacy_name]["definition"],
-                    "example": self.fallacies[fallacy_name]["example"]
-                }
-                print(f"Using fallacy: {fallacy_name}")
-
-                response = self.call_llm("assets/deceiver_system.md", fallacy_data=fallacy_data)
-
-                # Store (fallacy, argument) tuple
-                self.used_fallacies.append((fallacy_name, response))
-            else:
-                # User didn't say continue, ask them to acknowledge
-                response = "Please type 'continue' when you're ready to proceed with our discussion."
-
         elif self.stage == "deceiver":
 
             self.deceiver_rounds += 1
-            
+
             # Select random fallacy and format prompt
             fallacy_name = self._select_random_fallacy()
             fallacy_data = {
                 "name": fallacy_name,
                 "definition": self.fallacies[fallacy_name]["definition"],
-                "example": self.fallacies[fallacy_name]["example"]
+                "example": self.fallacies[fallacy_name]["example"],
             }
             print(f"Using fallacy: {fallacy_name}")
 
