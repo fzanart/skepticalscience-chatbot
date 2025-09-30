@@ -12,9 +12,9 @@ In each round, based on the user's specific climate question or statement, creat
    Oversimplification (reducing complex issues to simple explanations)
 4. Counterarguing preparation: Provide 1-2 key scientific facts that counter common misinformation about their topic
 5. Encourage critical thinking: Remind them to:
-   Consider the source of information
-   Look for the scientific consensus
-   Be aware of emotional manipulation
+   Consider the source of information, 
+   Look for the scientific consensus, 
+   Be aware of emotional manipulation. Reword this encouragement of critical thinking in different ways in each round to avoid repetition. 
    
 
 
