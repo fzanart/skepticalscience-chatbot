@@ -1,4 +1,5 @@
 import os
+import smtplib
 from datetime import datetime, timedelta
 import requests
 import gradio as gr
@@ -15,6 +16,9 @@ def save_conversation(workflow_state, history):
     filename = f"conversations/conversation_{timestamp}.txt"
 
     with open(filename, "w", encoding="utf-8") as f:
+        fallacies_used = [
+            fallacy_name for fallacy_name, _ in workflow_state.used_fallacies
+        ]
         fallacies_used = [
             fallacy_name for fallacy_name, _ in workflow_state.used_fallacies
         ]
@@ -58,17 +62,25 @@ def chat_fn(message, history, workflow_state, session_data):
     if session_data is None:
         session_data = {"start_time": current_time, "last_activity": current_time}
 
+        session_data = {"start_time": current_time, "last_activity": current_time}
+
     # Initialize workflow state for new users
     if workflow_state is None:
         workflow_state = ClimateWorkflow()
 
     # Check if 8 minutes passed since start of conversation
     time_since_start = current_time - session_data["start_time"]
+    time_since_start = current_time - session_data["start_time"]
     if time_since_start > timedelta(minutes=8):
         # Mark as complete and save conversation
         workflow_state.conversation_complete = True
         if history:  # Only save if there's actual conversation
             save_conversation(workflow_state, history)
+        return (
+            "Session timed out after 8 minutes. Thank you for participating!",
+            workflow_state,
+            session_data,
+        )
         return (
             "Session timed out after 8 minutes. Thank you for participating!",
             workflow_state,
@@ -82,8 +94,14 @@ def chat_fn(message, history, workflow_state, session_data):
             workflow_state,
             session_data,
         )
+        return (
+            "Thank you for participating! The conversation is now complete.",
+            workflow_state,
+            session_data,
+        )
 
     # Update activity time and process normally
+    session_data["last_activity"] = current_time
     session_data["last_activity"] = current_time
 
     # Execute with the user's specific workflow instance
