@@ -6,7 +6,6 @@ on:
       - main
       - feature/inoculation
       - feature/controlbot
-      - feature/concurrent-users
 
 jobs:
   mirror:
