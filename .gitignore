@@ -47,3 +47,6 @@ logs/
 *.log
 /old
 .claude/
+
+# GitHub workflows (don't sync to Hugging Face)
+.github/
