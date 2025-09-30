@@ -1,0 +1,85 @@
+name: Mirror from HF controlbot to feature/controlbot
+
+on:
+  repository_dispatch:
+    types: [hf-controlbot-update]
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature/controlbot branch
+        uses: actions/checkout@v3
+        with:
+          ref: feature/controlbot
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull from Hugging Face controlbot
+        id: pull_attempt
+        continue-on-error: true
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+          # Add HF remote
+          git remote add hf-pull https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/controlbot
+
+          # Try to fetch from HF main branch
+          git fetch hf-pull main
+          git merge hf-pull/main --no-edit || echo "Merge conflict or no changes"
+
+      - name: Set up Python if fetch failed
+        if: failure()
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install huggingface_hub if fetch failed
+        if: failure()
+        run: pip install huggingface_hub
+
+      - name: Make HF Space public and retry
+        if: failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          echo "Space may be private, attempting to make it public..."
+          python -c "
+          from huggingface_hub import update_repo_visibility
+          update_repo_visibility(
+              repo_id='skepticalscience/controlbot',
+              private=False,
+              token='$HF_TOKEN',
+              repo_type='space'
+          )
+          print('Space is now public')
+          "
+
+          # Retry fetch after making public
+          git fetch hf-pull main
+          git merge hf-pull/main --no-edit || echo "Merge conflict or no changes"
+
+      - name: Push to GitHub feature/controlbot
+        run: |
+          git push origin feature/controlbot
+
+      - name: Make HF Space private again
+        if: always()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install huggingface_hub
+          python -c "
+          from huggingface_hub import update_repo_visibility
+          update_repo_visibility(
+              repo_id='skepticalscience/controlbot',
+              private=True,
+              token='$HF_TOKEN',
+              repo_type='space'
+          )
+          print('Space is now private again')
+          "
