@@ -23,7 +23,9 @@ class ClimateWorkflow:
     def __init__(self):
         self.history = []
         self.model = ChatOpenAI(
-            model="gpt-4o-mini", openai_api_key=os.getenv("OPENAI_API_KEY")
+            model="gpt-4o-mini",
+            openai_api_key=os.getenv("OPENAI_API_KEY"),
+            temperature=0,
         )
         self.stage = "paraphrase"
         self.deceiver_rounds = 0
