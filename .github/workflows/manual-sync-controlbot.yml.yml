@@ -1,0 +1,21 @@
+name: Manual Sync Controlbot to HF
+
+on:
+  workflow_dispatch:  # This allows manual triggering from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature/controlbot branch
+        uses: actions/checkout@v3
+        with:
+          ref: feature/controlbot
+          fetch-depth: 0
+
+      - name: Push to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/controlbot
+          git push hf feature/controlbot:main --force
