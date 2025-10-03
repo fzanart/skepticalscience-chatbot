@@ -44,7 +44,8 @@ class ClimateWorkflow:
         """Select a random fallacy that hasn't been used yet"""
         used_fallacy_names = [fallacy_tuple[0] for fallacy_tuple in self.used_fallacies]
         available_fallacies = [
-            fallacy for fallacy in self.fallacies.keys()
+            fallacy
+            for fallacy in self.fallacies.keys()
             if fallacy not in used_fallacy_names
         ]
 
@@ -59,7 +60,7 @@ class ClimateWorkflow:
             fallacy_def = self.fallacies[fallacy_name]["definition"]
             formatted_fallacies.append(
                 f"{i}. **{fallacy_name}**: {fallacy_def}\n"
-                f"   - My argument: \"{argument}\""
+                f'   - My argument: "{argument}"'
             )
         return "\n\n".join(formatted_fallacies)
 
@@ -76,7 +77,7 @@ class ClimateWorkflow:
             system_content = system_content.format(
                 FALLACY=fallacy_data["name"],
                 DEFINITION=fallacy_data["definition"],
-                EXAMPLE=fallacy_data["example"]
+                EXAMPLE=fallacy_data["example"],
             )
 
         # If reveal data is provided, format with used fallacies
@@ -85,17 +86,7 @@ class ClimateWorkflow:
                 USED_FALLACIES_AND_ARGUMENTS=reveal_data["used_fallacies_and_arguments"]
             )
 
-        messages = [
-            SystemMessage(content=system_content)
-        ] + self.format_messages()
-
-        for i, msg in enumerate(messages):
-
-            if isinstance(msg, SystemMessage):
-
-            elif isinstance(msg, HumanMessage):
-
-            elif isinstance(msg, AIMessage):
+        messages = [SystemMessage(content=system_content)] + self.format_messages()
 
         return self.model.invoke(messages).content.strip()
 
@@ -149,13 +140,13 @@ class ClimateWorkflow:
 
                     self.stage = "deceiver"
                     self.deceiver_rounds += 1
-                    
+
                     # Select random fallacy and format prompt
                     fallacy_name = self._select_random_fallacy()
                     fallacy_data = {
                         "name": fallacy_name,
                         "definition": self.fallacies[fallacy_name]["definition"],
-                        "example": self.fallacies[fallacy_name]["example"]
+                        "example": self.fallacies[fallacy_name]["example"],
                     }
                     print(f"Using fallacy: {fallacy_name}")
 
@@ -173,13 +164,13 @@ class ClimateWorkflow:
         elif self.stage == "deceiver":
 
             self.deceiver_rounds += 1
-            
+
             # Select random fallacy and format prompt
             fallacy_name = self._select_random_fallacy()
             fallacy_data = {
                 "name": fallacy_name,
                 "definition": self.fallacies[fallacy_name]["definition"],
-                "example": self.fallacies[fallacy_name]["example"]
+                "example": self.fallacies[fallacy_name]["example"],
             }
             print(f"Using fallacy: {fallacy_name}")
 
