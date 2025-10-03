@@ -41,14 +41,6 @@ class ClimateWorkflow:
             SystemMessage(content=self.get_asset(path))
         ] + self.format_messages()
 
-        for i, msg in enumerate(messages):
-
-            if isinstance(msg, SystemMessage):
-
-            elif isinstance(msg, HumanMessage):
-
-            elif isinstance(msg, AIMessage):
-
         return self.model.invoke(messages).content.strip()
 
     def format_messages(self):
