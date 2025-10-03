@@ -22,7 +22,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git remote add hf-push https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/chatbot
-          git push hf-push main:main --force
+          git push hf-push main:main
 
       - name: Set up Python if push failed
         if: failure()
@@ -52,7 +52,7 @@ jobs:
           "
 
           # Retry push after making public
-          git push hf-push main:main --force
+          git push hf-push main:main
 
       - name: Make HF Space private again
         if: always()
