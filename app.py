@@ -1,43 +1,56 @@
 import os
+import json
 from datetime import datetime, timedelta
-import requests
 import gradio as gr
 from climate_workflow import ClimateWorkflow
+from huggingface_hub import HfApi
 
 
 def save_conversation(workflow_state, history):
-    """Save conversation to file with timestamp"""
-    # Create conversations folder
+    """Save conversation to JSON file"""
     os.makedirs("conversations", exist_ok=True)
 
-    # Generate filename with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"conversations/conversation_{timestamp}.txt"
+    conversation_id = f"conversation_{timestamp}"
+    filename = f"conversations/{conversation_id}.json"
+
+    # Structure the data
+    data = {
+        "id": conversation_id,
+        "timestamp": timestamp,
+        "fallacies_used": [
+            fallacy_name for fallacy_name, _ in workflow_state.used_fallacies
+        ],
+        "messages": [
+            {"id": idx, "role": msg["role"], "message": msg["content"]}
+            for idx, msg in enumerate(history)
+        ],
+    }
 
     with open(filename, "w", encoding="utf-8") as f:
-        fallacies_used = [
-            fallacy_name for fallacy_name, _ in workflow_state.used_fallacies
-        ]
-        f.write(f"Fallacies used: {', '.join(fallacies_used)}\n")
-        f.write(f"Final stage: {workflow_state.stage}\n")
-        f.write(f"Deceiver rounds: {workflow_state.deceiver_rounds}\n\n")
-        f.write("=== CONVERSATION HISTORY ===\n\n")
-
-        for msg in history:
-            f.write(f"{msg['role'].upper()}: {msg['content']}\n\n")
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
     print(f"Conversation saved to: {filename}")
-    send_to_discord(filename)
+    upload_to_hf(filename)
 
 
-def send_to_discord(filename):
+def upload_to_hf(filename):
+    """Upload to HF Dataset if configured"""
+    hf_token = os.environ.get("HF_TOKEN")
+    dataset_repo = os.environ.get("HF_DATASET_REPO")
 
-    webhook_url = os.environ.get("DISCORD_WEBHOOK_URL")
-
-    with open(filename, "rb") as f:
-        files = {"file": (os.path.basename(filename), f, "text/plain")}
-        data = {"content": f"====== {os.path.basename(filename)} ====="}
-        requests.post(webhook_url, data=data, files=files, timeout=60)
+    try:
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj=filename,
+            path_in_repo=os.path.basename(filename),
+            repo_id=dataset_repo,
+            repo_type="dataset",
+            token=hf_token,
+        )
+        print(f"Uploaded to {dataset_repo}")
+    except Exception as e:
+        print(f"Upload failed: {e}")
 
 
 def get_initial_messages():
