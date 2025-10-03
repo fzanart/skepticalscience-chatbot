@@ -100,13 +100,10 @@ class ClimateWorkflow:
         for i, msg in enumerate(messages):
 
             if isinstance(msg, SystemMessage):
-                print(i, "system")
 
             elif isinstance(msg, HumanMessage):
-                print(i, "user")
 
             elif isinstance(msg, AIMessage):
-                print(i, "assistant")
 
         return self.model.invoke(messages).content.strip()
 
