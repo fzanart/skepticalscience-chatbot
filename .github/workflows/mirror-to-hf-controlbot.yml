@@ -1,0 +1,72 @@
+name: Mirror feature/controlbot to HF controlbot
+
+on:
+  push:
+    branches:
+      - feature/controlbot
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Mirror feature/controlbot to HF Space (controlbot)
+        id: push_attempt
+        continue-on-error: true
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf-push https://fzanartu:${HF_TOKEN}@huggingface.co/spaces/skepticalscience/controlbot
+          git push hf-push feature/controlbot:main
+
+      - name: Set up Python if push failed
+        if: failure()
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install huggingface_hub if push failed
+        if: failure()
+        run: pip install huggingface_hub
+
+      - name: Make HF Space public and retry
+        if: failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          echo "Push failed, attempting to make space public..."
+          python -c "
+          from huggingface_hub import update_repo_visibility
+          update_repo_visibility(
+              repo_id='skepticalscience/controlbot',
+              private=False,
+              token='$HF_TOKEN',
+              repo_type='space'
+          )
+          print('Space is now public')
+          "
+
+          # Retry push after making public
+          git push hf-push feature/controlbot:main
+
+      - name: Make HF Space private again
+        if: always()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install huggingface_hub
+          python -c "
+          from huggingface_hub import update_repo_visibility
+          update_repo_visibility(
+              repo_id='skepticalscience/controlbot',
+              private=True,
+              token='$HF_TOKEN',
+              repo_type='space'
+          )
+          print('Space is now private again')
+          "
