@@ -18,9 +18,6 @@ def save_conversation(workflow_state, history):
     data = {
         "id": conversation_id,
         "timestamp": timestamp,
-        "fallacies_used": [
-            fallacy_name for fallacy_name, _ in workflow_state.used_fallacies
-        ],
         "messages": [
             {"id": idx, "role": msg["role"], "message": msg["content"]}
             for idx, msg in enumerate(history)
