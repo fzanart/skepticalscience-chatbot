@@ -102,7 +102,10 @@ def chat_fn(message, history, workflow_state, session_data):
     # If conversation just completed, save history
     if workflow_state.conversation_complete:
         # Include the final response in history for saving
-        complete_history = history + [{"role": "assistant", "content": response}]
+        complete_history = history + [
+            {"role": "user", "content": message},
+            {"role": "assistant", "content": response},
+        ]
         save_conversation(workflow_state, complete_history)
 
     return response, workflow_state, session_data
